@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+namespace: SQL문을 분류하는 용도로 사용하는 그룹명.
+          .프로그래밍의 일관성을 위해서 가능한 DAO의 패키지명과 같게 하라!
+ -->
+<mapper namespace="java76.pms.dao.BoardDao">
+<resultMap type="board" id="boardMap">
+    <!-- PK 컬럼은 가능한 <id> 태그로 정의한다. 
+        => 객체 풀에서 PK로 객체를 찾을 때 사용된다.
+    -->
+  
+    <id column="bno" property="no"/>
+    <result column="cre_dt" property="createdDate"/>
+  </resultMap>
+  
+  <sql id="select_inc">
+    select 
+      bno,
+      title,
+      views,
+      cre_dt,
+      content,
+      a_file
+  </sql>
+
+  <select id="selectList" resultMap="boardMap" parameterType="hashmap">
+    <include refid="select_inc"/>
+    from board
+    order by
+    <choose>
+      <when test="keyword == 'title'">title </when>
+      <when test="keyword == 'views'">views </when>
+      <otherwise>bno </otherwise>
+    </choose>
+    <choose>
+      <when test="align == 'asc'">asc</when>
+      <otherwise>desc</otherwise>
+    </choose>
+
+    limit #{startIndex},#{length}
+  </select>
+  
+  <insert id="insert" parameterType="board">
+    insert into board(title,content,pwd,cre_dt,a_file)
+    values(#{title},#{content},#{password},now(),#{a_file})<!-- 프로퍼티명 -->
+  </insert>
+  
+  <!-- primitive type인 경우 프로퍼티 이름은 아무거나 지정해도 된다. -->
+  <delete id="delete" parameterType="map">
+    delete from board 
+    where bno=#{no} and (pwd is null or pwd=#{password})
+  </delete>
+  
+  <update id="update" parameterType="board">
+  update board set 
+    title=#{title}, 
+    content=#{content}, 
+    cre_dt=now(),
+    a_file=#{a_file}
+  where bno=#{no} and (pwd is null or pwd=#{password})
+  
+  </update>
+  
+  <select id="selectOne" resultMap="boardMap" parameterType="int">
+    <include refid="select_inc"/>
+    from board
+    where bno=#{no}
+  </select>
+  
+  
+</mapper>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 
+namespace: SQL문을 분류하는 용도로 사용하는 그룹명.
+          .프로그래밍의 일관성을 위해서 가능한 DAO의 패키지명과 같게 하라!
+ -->
+<mapper namespace="java76.pms.dao.StudentDao">
+  <sql id="select_inc">
+    select name, email, tel, cid, image
+  </sql>
+
+  <select id="selectList" resultType="student" parameterType="map">
+    <include refid="select_inc"/>
+    from student
+    order by 
+    <choose>
+      <when test="keyword == 'email'"> email </when>
+      <when test="keyword == 'tel'"> tel </when>
+      <otherwise>name</otherwise>
+    </choose>
+    <choose>
+      <when test="align == 'desc'">desc </when>
+      <otherwise>asc</otherwise>
+    </choose>
+    limit #{startIndex},#{length}
+  </select>
+  
+  <insert id="insert" parameterType="student">
+    insert into student(name, email, tel, cid, pwd, image) 
+    values (#{name},#{email},#{tel},#{cid},#{pwd},#{image})
+  </insert>
+  
+  <delete id="delete" parameterType="map">
+    delete from student 
+    where email=#{email} AND (pwd is null or pwd = #{pwd})
+  </delete>
+  
+  
+  <update id="update" parameterType="student">
+    update student set
+      name=#{name},
+      tel=#{tel},
+      cid=#{cid},
+      image=#{image}
+    where email=#{email} AND (pwd is null or pwd = #{pwd})
+  </update>
+  
+  <select id="selectOne" resultType="student" parameterType="string">
+    <include refid="select_inc"/>
+    from student
+    where email = #{email}
+  </select>
+  
+  <select id="login" resultType="student" parameterType="map">
+    <include refid="select_inc"/>
+    from student
+    where email=#{email} and pwd=#{password}
+  </select>
+  
+</mapper>
