@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE projects SYSTEM "test05.dtd">
+
+<projects>
+  <student name="홍길동" gender="woman" email="hong"/>
+  <student name="임꺽정" gender="man" email="leem"/>
+  <student name="유관순" gender="woman" email="yoo"/>
+  <student name="김원봉" gender="man" email="kim"/>
+  <student name="김구" gender="man" email="kimku"/>
+  <student name="안중근" gender="man" email="ahn"/>
+  
+  
+  <project title="프로젝트1" owner="hong"/>
+</projects>

@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="java76.pms.dao.BoardDao">
+
+  <resultMap type="board" id="boardMap">
+    <id column="bno" property="no"/>
+    <result column="cre_dt" property="createdDate"/>
+  </resultMap>
+  
+  
+  <select id="selectList" resultMap="boardMap" parameterType="map">
+  SELECT
+    bno,
+    title,
+    views,
+    cre_dt
+  FROM
+    board
+  ORDER BY
+  <choose>
+    <when test="keyword == 'title'">title </when>
+    <when test="keyword == 'views'">views </when>
+    <otherwise>bno </otherwise>
+  </choose>
+  <choose>
+    <when test="align = 'desc'">desc</when>
+    <otherwise>asc</otherwise> 
+  </choose>
+  
+  limit #{startIndex}, #{length}
+  
+  </select>
+  
+  
+  <select id="selectOne" resultMap="boardMap" parameterType="int">
+  SELECT
+    bno,
+    title,
+    content,
+    views,
+    cre_dt
+  FROM
+    board
+  WHERE bno = #{no}  
+  </select>
+  
+  <update id="update" parameterType="board">
+    UPDATE board SET
+    title = #{title},
+    content = #{content},
+    cre_dt = now()
+    WHERE bno = #{no} AND (pwd is null OR pwd = #{password})
+  </update>
+  
+  <delete id="delete" parameterType="map">
+    DELETE FROM board
+    WHERE bno = #{no} AND (pwd is null OR pwd = #{password})
+    
+  </delete>
+  
+  <insert id="insert" parameterType="board">
+    INSERT INTO board (title, content, cre_dt, pwd) 
+    VALUES (#{title}, #{content}, now(), #{password})
+    
+  </insert>
+
+</mapper>
+
+
+
+
+
+

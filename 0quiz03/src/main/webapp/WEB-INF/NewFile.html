@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>게시판 정보</title>
+</head>
+<body>
+<p1>상세정보</p1>
+
+<form id="form1" action="update" method="post">
+<table border='1'>
+  <tr>
+    <th>번호</td>
+    <td><input type="text" name="no" readonly></td>
+  </tr>
+  <tr>
+    <th>타이틀</td>
+    <td><input type="text" name="title"></td>
+  </tr>
+  <tr>
+    <th>내용</td>
+    <td><textarea name="content"></textarea></td>
+  </tr>
+  <tr>
+    <th>조회수</td>
+    <td></td>
+  </tr>
+  <tr>
+    <th>등록일</td>
+    <td></td>
+  </tr>
+  <tr>
+    <th>비밀번호</td>
+    <td><input type="password" name="password"></td>
+  </tr>
+</table>
+<button name="update" type="submit">변경</button>
+<button name="delete" type="submit" onclick="deleteBoard()">삭제</button>
+</form>
+
+<script>
+function deleteBoard() {
+  document.getElementById("form1").action("delete");
+}
+</script>
+
+</body>
+</html>

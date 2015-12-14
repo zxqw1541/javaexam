@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE student SYSTEM "test02.dtd">
+
+<student>
+  <name>홍길동</name>
+  <age>20</age>
+</student>

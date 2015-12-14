@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE student SYSTEM "test01.dtd">
+
+<!-- student 태크는 오직 문자열만 가능하다 -->
+<!--
+
+-->
+<!--
+<student name="홍길동"/>
+-->
+
+<!-- tel은 선택
+<student name="홍길동" tel="1111"/>
+-->
+
+<!-- country에는 오직 "한국"만 가능하다.
+<student name="홍길동" country="미국"/>
+-->
+
+<!-- agr 값을 지정하지 않으면 기본 값을 갖는다. -->
+<student name="홍길동" age="30"/>
+

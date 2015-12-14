@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xmlns:context="http://www.springframework.org/schema/context"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context.xsd">
+
+  
+  <!--  1) @Component 애노테이션이 붙은 클래스의 인스턴스를 자동 생성하기 -->
+  <context:component-scan base-package="pms"/>
+  
+    
+  <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+    <property name="dataSource" ref="dataSource" /><!-- get/setDataSource함수 호출 이런식 -->
+    <property name="mapperLocations" 
+              value="classpath*:pms/dao/*Dao.xml" />
+    <property name="typeAliasesPackage" 
+              value="pms.domain" /> <!-- 자동 별명 지정 -->
+  </bean>
+
+  <!-- DataSource(DB 커넥션 풀)는 mybatis가 아니라 스프링에서 관리한다. -->
+  <bean id="dataSource" 
+        class="org.apache.commons.dbcp.BasicDataSource" 
+        destroy-method="close">
+    <property name="driverClassName" value="com.mysql.jdbc.Driver"/>
+    <property name="url" value="jdbc:mysql://localhost:3306/java76db"/>
+    <property name="username" value="java76"/>
+    <property name="password" value="1111"/>
+  </bean>
+
+</beans>

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE student SYSTEM "test01.dtd">
+
+<!-- student 태크는 오직 문자열만 가능하다 -->
+<!--
+
+-->
+
+<student>okok</student>
