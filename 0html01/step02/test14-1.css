@@ -1,0 +1,131 @@
+@CHARSET "UTF-8";
+body {
+  margin: 0px;
+  padding: 0px;
+  font-size: small;
+}
+
+div {
+  /*border: 1px solid gray;*/
+}
+
+
+img {
+  /*border: 1px solid yellow;*/
+  vertical-align: middle;
+}
+
+.header {
+  position: relative;
+  height: 50px;
+  line-height: 50px;
+  background-color: black;
+  color: white;
+  min-width: 600px;
+}
+
+/* position : absolute, fixed, relative 
+1) absolute
+=> absolute 또는 fixed 조상을 기준으로 자식 태그의 위치를 지정하기.
+=> 만약 조상 중에 absolte나 fixed 유형의 태그가 없다면 body를 기준으로 위치를 찾는다.
+=> float과 달리 좌/우, 상/하 어디에든 위치시킬 수 있다.
+
+*/
+.aside {
+  width: 180px;
+  position: absolute;
+  left: 0px;
+  top: 0px; 
+  margin: 0px;
+  background-color: #ffcc00;
+  opacity: 1;
+}
+
+.aside2 {
+  width: 180px;
+  position: absolute;
+  top: 0px;
+  right: 0px;
+  /*left: 500px;*/
+  margin: 0px;
+  background-color: #59f;
+}
+
+.section {
+  margin-left: 181px;
+  padding: 0px 10px;
+  min-width: 300px;
+}
+
+.footer {
+  width: 100%;
+  position: absolute;
+  left: 0px;
+  bottom: 0px;
+  text-align: center;
+}
+
+/* 쿠폰 이미지를 웹 브라우저 좌표로 위치 지정하기 */
+#coupon {
+  /* absolute의 특징은 기준 태그가 이동하면 그 태그를 따라 함께 이동한다. */
+  /*position: absolute;*/
+  
+  /* 기준이 되는 태그의 이동에 영향을 받지 않고,
+     웹 브라우저의 좌표를 기준으로 고정시키고 싶다면 fixed를 사용하라.*/
+  position: fixed;
+  
+  left: 0px;
+  top: 200px;
+}
+
+#ohora {
+  width: 50px;
+  position: absolute; /* 자신의 부모 태그인 'aside2'를 기준으로 위치를 찾는다.*/
+  right: 10px;
+  bottom: 0px;
+}
+
+#dotori {
+  width: 30px;
+}
+
+#title {
+  position: relative; /* 현재 위치를 고수하면서 위치 이동 */
+  left: -20px;
+  top: 5px;
+}
+
+#post-box {
+  border-style: none;
+  display: inline-block;
+  height: 44px;
+  width: 80px;
+  position: absolute;
+  right: 5px;
+}
+
+#post-img {
+  height: 40px;
+}
+
+#count {
+  border: 3px solid white;
+  color: white;
+  border-radius: 3px;
+  background: blue;
+  padding: 3px;
+  font-weight: bolder;
+  font-size: 1.2em;
+  position: relative;
+  left: 60px;
+  top: -6px;
+}
+
+#main {
+  position: relative;
+  /*border: 1px solid white;*/
+  width: 800px;
+  margin: 0px auto 0px auto;
+  border-top: 1px solid gray;
+  
+}
