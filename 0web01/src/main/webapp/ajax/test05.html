@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<style>
+#result  {
+  border: 1px solid red;
+}
+</style>
+</head>
+<body>
+<h1>AJAX 테스트</h1>
+<div id="result"></div>
+<script>
+/* 비동기 요청에서 서버의 오류를 처리하는 방법 */
+var xhr = new XMLHttpRequest();
+xhr.onreadystatechange = function(event) {
+	  if (xhr.readyState == 4) {
+		  if (xhr.status == 200) {
+			  document.querySelector('#result').innerHTML = xhr.responseText;
+		  } else {
+			  alert("서버와 연결이 원활하지 않습니다.");
+		  }
+	  }
+};
+
+xhr.open('get', 'test02.jsp', true); // 세 번째 파라미터 값을 true로 설정하라.
+xhr.send();
+
+
+</script>
+<img src ='photo.jpg'>
+<address>비트 캠프 자바76기</address>
+</body>
+</html>
