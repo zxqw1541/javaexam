@@ -5,15 +5,16 @@ import java.util.Map;
 
 import java76.pms.domain.Project;
 
-
 public interface ProjectDao {
+  List<Project> selectList(Map<String,Object> paramMap);
 
-  public List<Project> selectList(Map<String,Object> paramMap);
-  public int insert(Project project);
-  public int delete(int no);
-  public int update(Project project);
-  public Project selectOne(int no);
+  int insert(Project project);
+
+  int delete(int no);
   
+  int update(Project project);
+  
+  Project selectOne(int no);
 }
 
 

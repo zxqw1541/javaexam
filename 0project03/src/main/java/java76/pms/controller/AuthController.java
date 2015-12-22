@@ -6,7 +6,6 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,24 +16,22 @@ import java76.pms.domain.Student;
 
 @Controller
 @RequestMapping("/auth/*")
-public class AuthController {
+public class AuthController {  
   @Autowired StudentDao studentDao;
-  public static final Logger log = Logger.getLogger(AuthController.class);
 
   @RequestMapping(value="login", method=RequestMethod.GET)
   public String loginform() {
     return "auth/LoginForm";
   }
-  
+      
   @RequestMapping(value="login", method=RequestMethod.POST)
   public String login(
       String email,
       String password,
       String saveEmail,
-      HttpServletResponse response,
-      HttpSession session)  {
+      HttpServletResponse response, 
+      HttpSession session) {
 
-    System.out.println("authController.login() : " + email + "/" + password);
     Cookie emailCookie = null;
     if (saveEmail != null) { // 이메일 저장을 체크했으면,
       emailCookie = new Cookie("email", email);
@@ -44,18 +41,16 @@ public class AuthController {
       emailCookie.setMaxAge(0); // 웹브라우저에게 email 쿠키 삭제를 명령한다.
     }
     response.addCookie(emailCookie);
-    
-    HashMap<String, Object> paramMap = new HashMap<>();
+
+    HashMap<String,Object> paramMap = new HashMap<>();
     paramMap.put("email", email);
     paramMap.put("password", password);
-
+    
     Student student = studentDao.login(paramMap);
-
 
     if (student == null) { // 로그인 실패!
       session.invalidate(); // 세션을 무효화시킴. => 새로 세션 객체 생성!
-      
-      return "/auth/LoginFail";
+      return "auth/LoginFail";
     }
 
     session.setAttribute("loginUser", student);
@@ -63,11 +58,9 @@ public class AuthController {
   }
   
   @RequestMapping("logout")
-  public String logout(
-      HttpSession session) {
-    
+  public String logout(HttpSession session) {
     session.invalidate();
-    return "redirect:LoginForm.jsp";
+    return "redirect:login.do";
   }
 }
 

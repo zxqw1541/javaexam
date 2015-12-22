@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.ServletContext;
-import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -25,34 +24,30 @@ import net.coobird.thumbnailator.Thumbnails;
 @RequestMapping("/student/*")
 public class StudentController {
   public static final String SAVED_DIR = "/file";
+  
   @Autowired StudentDao studentDao;
   @Autowired ServletContext servletContext;
 
-  @RequestMapping("/student/list.do")
+  @RequestMapping("list")
   public String list(
       @RequestParam(defaultValue="1") int pageNo,
       @RequestParam(defaultValue="10") int pageSize,
-      @RequestParam(defaultValue="no") String keyword,
-      @RequestParam(defaultValue="desc") String align,
-      HttpServletRequest request) 
-          throws Exception {
+      @RequestParam(defaultValue="email") String keyword,
+      @RequestParam(defaultValue="asc") String align,
+      Model model) throws Exception {
 
-    // 파라미터 값이 넘오지 않으면 기본 값으로 설정한다.
-    if (pageNo < 0) pageNo = 1;
-    if (pageSize < 0) pageSize = 10;
-    if (keyword != null) keyword = "no";
-    if (align != null) align = "desc";
-    
-    HashMap<String, Object> paramMap = new HashMap<>();
+    HashMap<String,Object> paramMap = new HashMap<>();
     paramMap.put("startIndex", (pageNo - 1) * pageSize);
     paramMap.put("length", pageSize);
-    paramMap.put("keyboard", keyword);
+    paramMap.put("keyword", keyword);
     paramMap.put("align", align);
     
     List<Student> students = studentDao.selectList(paramMap);
-    request.setAttribute("students", students);
-    
+
+    model.addAttribute("students", students);
+
     return "student/StudentList";
+
   }
   
   @RequestMapping(value="add", method=RequestMethod.GET)
@@ -62,52 +57,44 @@ public class StudentController {
   
   @RequestMapping(value="add", method=RequestMethod.POST)
   public String add(
-      Student student,
-      MultipartFile image1) throws Exception {
+      String name,
+      String email,
+      String tel,
+      String cid,
+      String password,
+      MultipartFile photofile,
+      Model model) throws Exception {
 
     String newFileName = null;
-    if (image1.getOriginalFilename().length() > 0) {
-      newFileName = MultipartHelper.generateFilename(image1.getOriginalFilename());
-      makeFile(servletContext.getRealPath(SAVED_DIR)
-          + "/" + newFileName, image1);
+    
+    if (photofile.getSize() > 0) {
+      newFileName = MultipartHelper.generateFilename(photofile.getOriginalFilename());  
+      File attachfile = new File(
+          servletContext.getRealPath(SAVED_DIR) + "/" + newFileName);
+      photofile.transferTo(attachfile);
+      
+      makeThumbnailImage(
+        servletContext.getRealPath(SAVED_DIR) + "/" + newFileName, 
+        servletContext.getRealPath(SAVED_DIR) + "/s-" + newFileName + ".png");
     }
     
-    student.setImage(newFileName);
+    Student student = new Student();
+    student.setName(name);
+    student.setEmail(email);
+    student.setTel(tel);
+    student.setCid(cid);
+    student.setPassword(password);
+    student.setPhoto(newFileName);
 
     studentDao.insert(student);
 
     return "redirect:list.do";
-  }
-  
-  private void makeFile(String path, MultipartFile image) throws Exception {
-    File attachFile = new File(path);
-    image.transferTo(attachFile);
-    Thumbnails.of(attachFile).size(100, 100).toFile(path);
-  }
 
-  @RequestMapping("/student/delete.do")
-  public String delete(
-      String email,
-      String password,
-      Model model) throws Exception {
-    
-    
-    HashMap<String, Object> paramMap = new HashMap<>();
-    paramMap.put("email", email);
-    paramMap.put("pwd", password);
-
-    if (studentDao.delete(paramMap) <= 0) {
-      model.addAttribute("errorCode", "401");
-      return "/student/StudentAuthError.jsp";
-    }
-      
-    return "redirect:list.do";
   }
   
   @RequestMapping("detail")
-  public String detail(
-      String email,
-      Model model) throws Exception {
+  public String detail(String email, Model model) 
+          throws Exception {
 
     Student student = studentDao.selectOne(email);
     model.addAttribute("student", student);
@@ -117,24 +104,63 @@ public class StudentController {
 
   @RequestMapping("update")
   public String update(
-      Student student,
-      MultipartFile oimage,
-      String image,
+      String name,
+      String email,
+      String tel,
+      String cid,
+      String photo,
+      MultipartFile photofile,
       Model model) throws Exception {
 
     String newFileName = null;
-    if (oimage.getOriginalFilename().length() > 0) {
-      newFileName = MultipartHelper.generateFilename(oimage.getOriginalFilename());
-      makeFile(servletContext.getRealPath(SAVED_DIR)
-          + "/" + newFileName, oimage);
-      student.setImage(newFileName);
+    
+    if (photofile.getSize() > 0) {
+      newFileName = MultipartHelper.generateFilename(photofile.getOriginalFilename());  
+      File attachfile = new File(
+          servletContext.getRealPath(SAVED_DIR) + "/" + newFileName);
+      photofile.transferTo(attachfile);
+      
+      makeThumbnailImage(
+          servletContext.getRealPath(SAVED_DIR) + "/" + newFileName, 
+          servletContext.getRealPath(SAVED_DIR) + "/s-" + newFileName + ".png");
+    }
+    
+    Student student = new Student();
+    student.setName(name);
+    student.setEmail(email);
+    student.setTel(tel);
+    student.setCid(cid);
+    
+    if (newFileName != null) {
+      student.setPhoto(newFileName);
+    } else if (newFileName == null && photo.length() > 0) {
+      student.setPhoto(photo);
     }
     
     if (studentDao.update(student) <= 0) {
       model.addAttribute("errorCode", "401");
-      return "board/BoardAuthError";
+      return "student/StudentAuthError";
+    } 
+
+    return "redirect:list.do";
+  }
+  
+  @RequestMapping("delete")
+  public String delete(String email, Model model) throws Exception {
+
+    if (studentDao.delete(email) <= 0) {
+      model.addAttribute("errorCode", "401");
+      return "/student/StudentAuthError.jsp";
     }
     return "redirect:list.do";
-
+  }
+  
+  private void makeThumbnailImage(String originPath, String thumbPath) 
+      throws IOException {
+    Thumbnails.of(new File(originPath))
+    .size(60,44)
+    .outputFormat("png")
+    .outputQuality(1.0)
+    .toFile(new File(thumbPath));
   }
 }

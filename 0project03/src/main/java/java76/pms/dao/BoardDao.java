@@ -6,17 +6,20 @@ import java.util.Map;
 import java76.pms.domain.Board;
 
 public interface BoardDao {
-
-  public List<Board> selectList(Map<String,Object> paramMap);
-    
-
-  public int insert(Board board);
-
-  public int delete(Map<String,Object> paramMap);
+  List<Board> selectList(Map<String,Object> paramMap);
   
-  public int update(Board board);
-
-  public Board selectOne(int no);
+  int insert(Board board);
   
+  int delete(Map<String,Object> paramMap);
+  
+  int update(Board board);
+
+  Board selectOne(int no);
 }
+
+
+
+
+
+
 

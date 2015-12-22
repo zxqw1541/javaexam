@@ -12,7 +12,6 @@ public class Project implements Serializable {
   protected Date    endDate;
   protected String  member;
   
-  
   public Project() {}
   
   public Project(String title, Date startDate, Date endDate) {
@@ -20,13 +19,12 @@ public class Project implements Serializable {
     this.startDate = startDate;
     this.endDate = endDate;
   }
-  
+
   @Override
   public String toString() {
     return "Project [no=" + no + ", title=" + title + ", startDate=" + startDate + ", endDate=" + endDate + ", member="
         + member + "]";
   }
-  
 
   public int getNo() {
     return no;
@@ -67,7 +65,4 @@ public class Project implements Serializable {
   public void setMember(String member) {
     this.member = member;
   }
-
-  
-  
 }

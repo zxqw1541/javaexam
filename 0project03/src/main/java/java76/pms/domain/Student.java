@@ -4,45 +4,26 @@ import java.io.Serializable;
 
 public class Student implements Serializable {
   private static final long serialVersionUID = 1L;
+  
   protected String name;
   protected String email;
   protected String tel;
   protected String cid; // class ID
-  protected String pwd;
-  protected String image;
+  protected String photo;
+  protected String password;
   
   public Student() {}
   
-  public Student(String name, String tel) {
+  public Student(String name, String email) {
+    this.email = email;
     this.name = name;
-    this.tel = tel;
   }
   
-  
-
-
   @Override
   public String toString() {
-    return "Student [name=" + name + ", email=" + email + ", tel=" + tel + ", cid=" + cid + ", pwd=" + pwd + ", image="
-        + image + "]";
+    return this.getName() + "," + this.getEmail() + "," +
+          this.getTel() + "," + this.getCid();
   }
-
-  public String getImage() {
-    return image;
-  }
-
-  public void setImage(String image) {
-    this.image = image;
-  }
-
-  public String getPwd() {
-    return pwd;
-  }
-
-  public void setPwd(String pwd) {
-    this.pwd = pwd;
-  }
-
 
   public String getName() {
     return name;
@@ -74,6 +55,22 @@ public class Student implements Serializable {
 
   public void setCid(String cid) {
     this.cid = cid;
+  }
+
+  public String getPhoto() {
+    return photo;
+  }
+
+  public void setPhoto(String photo) {
+    this.photo = photo;
+  }
+
+  public String getPassword() {
+    return password;
+  }
+
+  public void setPassword(String password) {
+    this.password = password;
   }
   
   

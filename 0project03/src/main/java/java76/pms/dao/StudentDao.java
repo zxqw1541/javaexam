@@ -6,11 +6,22 @@ import java.util.Map;
 import java76.pms.domain.Student;
 
 public interface StudentDao {
+  List<Student> selectList(Map<String,Object> paramMap);
 
-  public List<Student> selectList(Map<String,Object> paramMap);
-  public int insert(Student student);
-  public int delete(Map<String,Object> paramMap);
-  public int update(Student student);
-  public Student selectOne(String email);
-  public Student login(Map<String,Object> paramMap);
+  int insert(Student student);
+
+  int delete(String email);
+  
+  int update(Student student);
+
+  Student selectOne(String email);
+
+  Student login(Map<String,Object> paramMap);
 }
+
+
+
+
+
+
+

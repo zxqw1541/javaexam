@@ -20,8 +20,10 @@ import java76.pms.util.MultipartHelper;
 
 @Controller
 @RequestMapping("/board/*")
-public class BoardController{
+public class BoardController { 
+  
   public static final String SAVED_DIR = "/attachfile";
+  
   @Autowired BoardDao boardDao;
   @Autowired ServletContext servletContext;
   
@@ -31,13 +33,12 @@ public class BoardController{
       @RequestParam(defaultValue="10") int pageSize,
       @RequestParam(defaultValue="no") String keyword,
       @RequestParam(defaultValue="desc") String align,
-      Model model) 
-          throws Exception {
-
-    HashMap<String, Object> paramMap = new HashMap<>();
+      Model model) throws Exception {
+    
+    HashMap<String,Object> paramMap = new HashMap<>();
     paramMap.put("startIndex", (pageNo - 1) * pageSize);
     paramMap.put("length", pageSize);
-    paramMap.put("keyboard", keyword);
+    paramMap.put("keyword", keyword);
     paramMap.put("align", align);
     
     List<Board> boards = boardDao.selectList(paramMap);
@@ -47,83 +48,75 @@ public class BoardController{
     return "board/BoardList";
   }
   
-  
   @RequestMapping(value="add", method=RequestMethod.GET)
   public String form() {
     return "board/BoardForm";
   }
-  
+      
   @RequestMapping(value="add", method=RequestMethod.POST)
-  public String add(
-      Board board,
-      MultipartFile file) throws Exception {
+  public String add(Board board, MultipartFile file) throws Exception {
     
-    System.out.println(file.getSize());
-    String newFileName = null;
     if (file.getSize() > 0) {
-      newFileName = MultipartHelper.generateFilename(file.getOriginalFilename());
-      File attachFile = new File(
-          servletContext.getRealPath(SAVED_DIR)
-          + "/" + newFileName);
-      file.transferTo(attachFile);
+      String newFileName = MultipartHelper.generateFilename(file.getOriginalFilename());  
+      File attachfile = new File(servletContext.getRealPath(SAVED_DIR) 
+                                  + "/" + newFileName);
+      file.transferTo(attachfile);
+      board.setAttachFile(newFileName);
     }
-    board.setA_file(newFileName);
 
     boardDao.insert(board);
-
+    
     return "redirect:list.do";
   }
   
   @RequestMapping("detail")
-    public String detail(int no, Model model) throws Exception {
-
+  public String detail(int no, Model model) throws Exception {
+    
     Board board = boardDao.selectOne(no);
     model.addAttribute("board", board);
+    
     return "board/BoardDetail";
   }
 
   @RequestMapping(value="update", method=RequestMethod.POST)
   public String update(
-      Board board,
+      Board board, 
       MultipartFile file, 
       Model model) throws Exception {
     
-    String newFileName = null;
-    System.out.println("a_file : " + board.getA_file());
-    System.out.println("file : " + file.getName());
-    System.out.println(file.getOriginalFilename().length());
-    if (file.getOriginalFilename().length() > 0) {
-      newFileName = MultipartHelper.generateFilename(file.getOriginalFilename());
-      File attachFile = new File(servletContext.getRealPath(SAVED_DIR)
-          + "/" + newFileName);
-      file.transferTo(attachFile);
-      board.setA_file(newFileName);
+    if (file.getSize() > 0) {
+      String newFileName = MultipartHelper.generateFilename(file.getOriginalFilename());  
+      File attachfile = new File(servletContext.getRealPath(SAVED_DIR) 
+                                  + "/" + newFileName);
+      file.transferTo(attachfile);
+      board.setAttachFile(newFileName);
+    } else if (board.getAttachFile().length() == 0) {
+      board.setAttachFile(null);
     }
     
-
     if (boardDao.update(board) <= 0) {
       model.addAttribute("errorCode", "401");
       return "board/BoardAuthError";
-    }
+    } 
+    
     return "redirect:list.do";
   }
   
-  @RequestMapping("delete")
+  @RequestMapping("delete.do")
   public String delete(
-      int no,
+      int no, 
       String password,
       Model model) throws Exception {
 
-
-    HashMap<String, Object> paramMap = new HashMap<>();
+    HashMap<String,Object> paramMap = new HashMap<>();
     paramMap.put("no", no);
     paramMap.put("password", password);
-
+    
     if (boardDao.delete(paramMap) <= 0) {
-      model.addAttribute("erroerMessage", "401");
+      model.addAttribute("errorCode", "401");
       return "board/BoardAuthError";
     } 
-    
+
     return "redirect:list.do";
   }
 }

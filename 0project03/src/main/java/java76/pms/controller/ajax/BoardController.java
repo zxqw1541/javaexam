@@ -17,8 +17,10 @@ import java76.pms.domain.Board;
 
 @Controller("ajax.BoardController")
 @RequestMapping("/board/ajax/*")
-public class BoardController{
+public class BoardController { 
+  
   public static final String SAVED_DIR = "/attachfile";
+  
   @Autowired BoardDao boardDao;
   @Autowired ServletContext servletContext;
   
@@ -28,86 +30,81 @@ public class BoardController{
       @RequestParam(defaultValue="10") int pageSize,
       @RequestParam(defaultValue="no") String keyword,
       @RequestParam(defaultValue="desc") String align) throws Exception {
-
-    HashMap<String, Object> paramMap = new HashMap<>();
+    
+    HashMap<String,Object> paramMap = new HashMap<>();
     paramMap.put("startIndex", (pageNo - 1) * pageSize);
     paramMap.put("length", pageSize);
-    paramMap.put("keyboard", keyword);
+    paramMap.put("keyword", keyword);
     paramMap.put("align", align);
     
     List<Board> boards = boardDao.selectList(paramMap);
     
-    HashMap<String, Object> resultMap = new HashMap<>();
+    HashMap<String,Object> resultMap = new HashMap<>();
     resultMap.put("status", "success");
     resultMap.put("data", boards);
     
     return resultMap;
   }
   
-  
   @RequestMapping(value="add", method=RequestMethod.GET)
   public String form() {
     return "board/BoardForm";
   }
-  
+      
   @RequestMapping(value="add", method=RequestMethod.POST)
   public AjaxResult add(Board board/*, MultipartFile file*/) throws Exception {
-
     /*
-    String newFileName = null;
     if (file.getSize() > 0) {
-      newFileName = MultipartHelper.generateFilename(file.getOriginalFilename());
-      File attachFile = new File(
-          servletContext.getRealPath(SAVED_DIR)
-          + "/" + newFileName);
-      file.transferTo(attachFile);
+      String newFileName = MultipartHelper.generateFilename(file.getOriginalFilename());  
+      File attachfile = new File(servletContext.getRealPath(SAVED_DIR) 
+                                  + "/" + newFileName);
+      file.transferTo(attachfile);
+      board.setAttachFile(newFileName);
     }
-    board.setA_file(newFileName);
     */
     boardDao.insert(board);
-
+    
     return new AjaxResult("success", null);
   }
   
   @RequestMapping("detail")
-    public Object detail(int no) throws Exception {
-
+  public Object detail(int no) throws Exception {
     Board board = boardDao.selectOne(no);
     return new AjaxResult("success", board);
   }
 
   @RequestMapping(value="update", method=RequestMethod.POST)
   public AjaxResult update(Board board/*, MultipartFile file*/) throws Exception {
-    
     /*
-    String newFileName = null;
-    if (file.getOriginalFilename().length() > 0) {
-      newFileName = MultipartHelper.generateFilename(file.getOriginalFilename());
-      File attachFile = new File(servletContext.getRealPath(SAVED_DIR)
-          + "/" + newFileName);
-      file.transferTo(attachFile);
-      board.setA_file(newFileName);
-    }*/
-    
-
-    if (boardDao.update(board) <= 0) {
-      return new AjaxResult("failure", null);
+    if (file.getSize() > 0) {
+      String newFileName = MultipartHelper.generateFilename(file.getOriginalFilename());  
+      File attachfile = new File(servletContext.getRealPath(SAVED_DIR) 
+                                  + "/" + newFileName);
+      file.transferTo(attachfile);
+      board.setAttachFile(newFileName);
+    } else if (board.getAttachFile().length() == 0) {
+      board.setAttachFile(null);
     }
-    return new AjaxResult("success", null);
-  }
-  
-  @RequestMapping("delete")
-  public AjaxResult delete(int no, String password) throws Exception {
-
-
-    HashMap<String, Object> paramMap = new HashMap<>();
-    paramMap.put("no", no);
-    paramMap.put("password", password);
-
-    if (boardDao.delete(paramMap) <= 0) {
+    */
+    
+    if (boardDao.update(board) <= 0) {
       return new AjaxResult("failure", null);
     } 
     
+    return new AjaxResult("success", null);
+  }
+  
+  @RequestMapping("delete.do")
+  public AjaxResult delete(int no, String password) throws Exception {
+
+    HashMap<String,Object> paramMap = new HashMap<>();
+    paramMap.put("no", no);
+    paramMap.put("password", password);
+    
+    if (boardDao.delete(paramMap) <= 0) {
+      return new AjaxResult("failure", null);
+    } 
+
     return new AjaxResult("success", null);
   }
 }

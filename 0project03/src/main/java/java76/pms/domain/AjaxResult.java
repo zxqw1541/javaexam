@@ -28,10 +28,6 @@ public class AjaxResult {
     this.data = data;
     return this;
   }
-
-  @Override
-  public String toString() {
-    return "AjaxResult [status=" + status + ", data=" + data + "]";
-  }
+  
   
 }
