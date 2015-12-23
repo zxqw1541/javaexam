@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
-import java76.pms.dao.StudentDao;
 import java76.pms.domain.Student;
+import java76.pms.service.StudentService;
 import java76.pms.util.MultipartHelper;
 import net.coobird.thumbnailator.Thumbnails;
 
@@ -25,7 +25,7 @@ import net.coobird.thumbnailator.Thumbnails;
 public class StudentController {
   public static final String SAVED_DIR = "/file";
   
-  @Autowired StudentDao studentDao;
+  @Autowired StudentService studentService;
   @Autowired ServletContext servletContext;
 
   @RequestMapping("list")
@@ -42,7 +42,8 @@ public class StudentController {
     paramMap.put("keyword", keyword);
     paramMap.put("align", align);
     
-    List<Student> students = studentDao.selectList(paramMap);
+    List<Student> students = studentService.getStudentList(
+        pageNo, pageSize, keyword, align);
 
     model.addAttribute("students", students);
 
@@ -86,7 +87,7 @@ public class StudentController {
     student.setPassword(password);
     student.setPhoto(newFileName);
 
-    studentDao.insert(student);
+    studentService.register(student);
 
     return "redirect:list.do";
 
@@ -96,7 +97,7 @@ public class StudentController {
   public String detail(String email, Model model) 
           throws Exception {
 
-    Student student = studentDao.selectOne(email);
+    Student student = studentService.retrieve(email);
     model.addAttribute("student", student);
 
     return "student/StudentDetail";
@@ -137,21 +138,16 @@ public class StudentController {
       student.setPhoto(photo);
     }
     
-    if (studentDao.update(student) <= 0) {
-      model.addAttribute("errorCode", "401");
-      return "student/StudentAuthError";
-    } 
+    studentService.change(student);
 
     return "redirect:list.do";
   }
   
   @RequestMapping("delete")
   public String delete(String email, Model model) throws Exception {
-
-    if (studentDao.delete(email) <= 0) {
-      model.addAttribute("errorCode", "401");
-      return "/student/StudentAuthError.jsp";
-    }
+    
+    studentService.remove(email);
+    
     return "redirect:list.do";
   }
   

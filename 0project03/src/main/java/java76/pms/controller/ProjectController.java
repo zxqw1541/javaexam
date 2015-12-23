@@ -11,13 +11,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import java76.pms.dao.ProjectDao;
 import java76.pms.domain.Project;
+import java76.pms.service.ProjectService;
 
 @Controller
 @RequestMapping("/project/*")
 public class ProjectController {  
-  @Autowired ProjectDao projectDao;
+  @Autowired ProjectService projectService;
   
   @RequestMapping("list")
   public String list(
@@ -33,7 +33,8 @@ public class ProjectController {
     paramMap.put("keyword", keyword);
     paramMap.put("align", align);
     
-    List<Project> projects = projectDao.selectList(paramMap);
+    List<Project> projects = projectService.selectList(
+        pageNo, pageSize, keyword, align);
     
     model.addAttribute("projects", projects);
     
@@ -59,7 +60,7 @@ public class ProjectController {
     project.setEndDate(Date.valueOf(endDate));
     project.setMember(member);
 
-    projectDao.insert(project); 
+    projectService.register(project); 
 
     return "redirect:list.do";
   }
@@ -67,7 +68,7 @@ public class ProjectController {
   @RequestMapping("detail")
   public String detail(int no, Model model) throws Exception {
 
-    Project project = projectDao.selectOne(no);
+    Project project = projectService.retrieve(no);
     model.addAttribute("project", project);
     
     return "project/ProjectDetail";
@@ -88,23 +89,15 @@ public class ProjectController {
     project.setEndDate(Date.valueOf(endDate));
     project.setMember(member);
     project.setNo(no);
-
-    if (projectDao.update(project) <= 0) {
-      model.addAttribute("errorCode", "401");
-      return "project/ProjectAuthError";
-    } 
+    
+    projectService.change(project);
 
     return "redirect:list.do";
-
   }
   
   @RequestMapping("delete")
   public String delete(int no, Model model) throws Exception {
-
-    if (projectDao.delete(no) <= 0) {
-      model.addAttribute("errorCode", "401");
-      return "/project/ProjectAuthError.jsp";
-    } 
+    projectService.remove(no);
 
     return "redirect:list.do";
   }
